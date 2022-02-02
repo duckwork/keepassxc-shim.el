@@ -1,0 +1,81 @@
+#+TITLE: KeePassXC Shim
+
+Emacs interfaces with Freedesktop's [[https://specifications.freedesktop.org/secret-service//latest/][Secret-Service]], and so does [[https://keepassxc.org/][KeePassXC]].
+However, to get these two to work together, a little bit more glue is
+necessary.
+
+KeePassXC stores keys like ~:UserName~ and ~:URL~, whereas the ~auth-source~
+library, while technically backend-agnostic, advises and tends to expect keys
+like ~:user~ and ~:host~.
+
+This shim makes working with KeePassXC-backed secret stores just a little
+easier to work with, especially when also using other auth-sources like
+=~/.authinfo=, etc.  Maybe this isn't the best idea; in fact, maybe it's simply
+terrible.  Whatever, says I.
+
+* Rationale
+
+The =auth-source= library is pretty good for programmatic insertion of various
+passwords.  The fact that it has support for multiple back ends to pull
+credentials from is especially nice.  And the fact that it can interface with
+a freedesktop secret service is best of all, in my opinion.
+
+Likewise, =KeePassXC= is one of the best password managers around today.  It can
+store arbitrary information in an encrypted store, it has add-ons for
+integration in browsers and across the OS, and most importantly for the purposes
+of this package, it can act as a secret service.
+
+However, I have found that these two perfectly serviceable pieces of software
+have a somewhat idea about the naming schemes for the information they store.
+For the purposes of this package, I have termed these different schema /styles/:
+where the =auth-source= style has =:user=, =keepassxc= has =:UserName=; where =keepassxc=
+has =:URL=, =auth-source= has =:host= (note that that is not quite a one-to-one
+correspondence).  These are all I've run into, but the user may find others; see
+[[*Customization]] for details.
+
+* Installation
+
+This package isn't on any ELPAe, and it honestly probably shouldn't be.  If you
+want it, you can ~git clone~ it yourself somewhere and tell Emacs where it is, or
+you can use something like =straight.el=, which is what I do.
+
+* Customization
+
+~keepassxc-shim~ has the following customization options:
+
+- ~keepassxc-shim-how~ :: How to advise ~auth-source-search~ to make searching for
+  KeePassXC-style easier.  See its doc string for its possible values.
+- ~keepassxc-shim-keys-transform~ :: Keywords to transform from the ~auth-source~
+  style to the =KeePassXC= style.
+
+* Usage
+
+After installing =keepassxc-shim=, call ~keepassxc-shim-activate~ to advise
+=auth-source-search= in the manner specified by =keepassxc-shim-how=.  You can call
+~keepassxc-shim-deactivate~ later to remove the advice.
+
+I've also included a convenience function in this package,
+~keepassxc-shim-import~, to import all the secrets from your =netrc=-type
+~auth-sources~ into your secret service provider, which I'm assuming is KeePassXC
+if you're using this package.  I'd recommend backing up your KeePassXC database
+and reading the source of this function before using it.  It worked for me, but
+I make no promises.
+
+* Considerations
+
+This package implements a bad copy of ~auth-source-search~ to get around the
+advice system, which is probably a terrible idea.  This package might also
+corrupt your secrets database or make things terrible in other ways.
+
+I cannot recommend use of this package.  That being said, here it is on the
+Internet =¯\_(ツ)_/¯=.
+
+* License
+
+This package and its documentation are distributed under the terms of the ISC
+license.  See the LICENSE file in this repo for details.
+
+* Contributions
+
+Feel free to contribute via issue reports or pull requests!  I'm sure there's a
+better way to do this.
