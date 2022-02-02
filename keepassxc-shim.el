@@ -2,8 +2,9 @@
 
 ;; Author: Case Duckworth <acdw@acdw.net>
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "25.1"))
+;; License: ISC
 ;; URL: https://github.com/duckwork/keypassxc-shim.el
+;; Package-Requires: ((emacs "25.1"))
 ;; Keywords: comm password passphrase convenience
 
 ;;; Commentary:
