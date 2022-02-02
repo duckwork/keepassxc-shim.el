@@ -65,7 +65,7 @@ KeePassXC style."
 (defun keepassxc-shim--filter-args (args)
   "Convert the ARGS to `auth-source-search' between styles.
 This converts them rom auth-source style to KeePassXC style."
-  (cl-loop for arg in plist
+  (cl-loop for arg in args
            collect (or (alist-get arg keepassxc-shim-keys-transform)
                        arg)))
 
