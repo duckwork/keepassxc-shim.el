@@ -2,7 +2,7 @@
 
 ;; Author: Case Duckworth <acdw@acdw.net>
 ;; Version: 0.1.0
-;; Package-Requires: ((emacs "24.3"))
+;; Package-Requires: ((emacs "25.1"))
 ;; URL: https://github.com/duckwork/keypassxc-shim.el
 ;; Keywords: comm password passphrase convenience
 
@@ -26,7 +26,6 @@
 (require 'auth-source)
 (require 'cl-lib)
 (require 'secrets)
-(require 'url-parse)
 
 (defgroup keepassxc-shim nil
   "Customizations for the KeePassXC shim."
@@ -62,10 +61,10 @@ KeePassXC style."
   :type '(alist :key-type symbol
                 :value-type symbol))
 
-(defun keepassxc-shim--filter-args (plist)
-  "Convert the arguments to `auth-source-search'.
-From auth-source style to KeePassXC style."
-  (cl-loop for arg in plist 
+(defun keepassxc-shim--filter-args (args)
+  "Convert the ARGS to `auth-source-search' between styles.
+This converts them rom auth-source style to KeePassXC style."
+  (cl-loop for arg in plist
            collect (or (alist-get arg keepassxc-shim-keys-transform)
                        arg)))
 
@@ -75,6 +74,9 @@ From auth-source style to KeePassXC style."
   "`Keepassxc-shim' copy of `auth-source-search'.
 This is a simplified copy of `auth-source-search'.  I have to use
 this on the fallback or else it will endlessly loop.
+
+SPEC, MAX, and REQUIRE are as in `auth-source-search'.  CREATE
+and DELETE are ignored.
 
 This is just as cursed as it seems."
   (let* ((backends (mapcar #'auth-source-backend-parse auth-sources))
@@ -96,6 +98,8 @@ This is just as cursed as it seems."
     (auth-source-search-backends filtered-backends spec max nil nil require)))
 
 (defun keepassxc-shim--fallback (&rest plist)
+  "Fallback funtion to search for KeePassXC-style arguments.
+PLIST is filtered then searched for in `auth-sources'."
   (apply #'keepassxc-shim--auth-source-search (keepassxc-shim--filter-args plist)))
 
 (defun keepassxc-shim-activate (&optional how)
