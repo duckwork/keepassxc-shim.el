@@ -48,7 +48,7 @@ the following:
 
 - `replace': Only KeePassXC-style keys will be searched.
 
-- nil: Disable the shim altogether."
+- `remove': Disable the shim altogether."
   :type '(choice (const :tag "KeePassXC-style as a fallback" fallback)
                  (const :tag "Authinfo-style as a fallback" priority)
                  (const :tag "Only search KeePassXC-style" replace)
@@ -103,6 +103,7 @@ This is just as cursed as it seems."
 PLIST is filtered then searched for in `auth-sources'."
   (apply #'keepassxc-shim--auth-source-search (keepassxc-shim--filter-args plist)))
 
+;;;###autoload
 (defun keepassxc-shim-activate (&optional how)
   "Activate the KeePassXC shim.
 This advises `auth-source-search' in a way befitting HOW, which
@@ -115,6 +116,7 @@ defaults to the value of `keepassxc-shim-how'."
     (remove (advice-remove 'auth-source-search #'keepassxc-shim--fallback)
             (advice-remove 'auth-source-search #'keepassxc-shim--filter-args))))
 
+;;;###autoload
 (defun keepassxc-shim-deactivate ()
   "Deactivate the KeePassXC shim."
   (keepassxc-shim-activate 'remove))
@@ -124,6 +126,7 @@ defaults to the value of `keepassxc-shim-how'."
 ;; it often, but it's a nice bit of kit that I whipped up that would be a shame
 ;; to waste.
 
+;;;###autoload
 (defun keepassxc-shim-import (&optional type)
   "Import a database of TYPE into `secret-store'.
 The keys are specific to KeePassXC."
